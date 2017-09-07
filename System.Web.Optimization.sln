@@ -1,0 +1,84 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Web.Optimization", "src\System.Web.Optimization\System.Web.Optimization.csproj", "{1075A673-BA04-452A-98A1-9067C5E7CC3D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1D66C4E5-4C20-4545-A512-D6680BC40080}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{C2254BBA-9321-4BB0-9985-886941EB7996}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SystemWebOptimizationUnitTest", "test\SystemWebOptimizationUnitTest\SystemWebOptimizationUnitTest.csproj", "{E19167F0-1579-4931-94F7-21A7128569EF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{81BB8242-0360-4DE9-A70B-36E375F7A186}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\WPTFxDCR\src\ndp\fx\src\xsp\System\aspnet.vsmdi = ..\..\..\WPTFxDCR\src\ndp\fx\src\xsp\System\aspnet.vsmdi
+		..\..\..\WPTFxDCR\src\ndp\fx\src\xsp\System\CodeCoverage.testrunconfig = ..\..\..\WPTFxDCR\src\ndp\fx\src\xsp\System\CodeCoverage.testrunconfig
+		..\..\..\WPTFxDCR\src\ndp\fx\src\xsp\System\Default.testrunconfig = ..\..\..\WPTFxDCR\src\ndp\fx\src\xsp\System\Default.testrunconfig
+		Local.testsettings = Local.testsettings
+		System.Web.Optimization.vsmdi = System.Web.Optimization.vsmdi
+		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestUtil", "test\TestUtil\TestUtil.csproj", "{AA6E6E43-224E-47D1-9789-D118A3F5DE5D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.AspNet.Web.Optimization.WebForms", "src\WebForms\Microsoft.AspNet.Web.Optimization.WebForms.csproj", "{565DF39B-F6AD-4E9E-B807-F9F0A2E9BD92}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 5
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://vstfdevdiv:8080/devdiv2
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = src\\System.Web.Optimization\\System.Web.Optimization.csproj
+		SccProjectTopLevelParentUniqueName1 = System.Web.Optimization.sln
+		SccProjectName1 = src/System.Web.Optimization
+		SccLocalPath1 = src\\System.Web.Optimization
+		SccProjectUniqueName2 = test\\SystemWebOptimizationUnitTest\\SystemWebOptimizationUnitTest.csproj
+		SccProjectTopLevelParentUniqueName2 = System.Web.Optimization.sln
+		SccProjectName2 = test/SystemWebOptimizationUnitTest
+		SccLocalPath2 = test\\SystemWebOptimizationUnitTest
+		SccProjectUniqueName3 = test\\TestUtil\\TestUtil.csproj
+		SccProjectTopLevelParentUniqueName3 = System.Web.Optimization.sln
+		SccProjectName3 = test/TestUtil
+		SccLocalPath3 = test\\TestUtil
+		SccProjectUniqueName4 = src\\WebForms\\Microsoft.AspNet.Web.Optimization.WebForms.csproj
+		SccProjectTopLevelParentUniqueName4 = System.Web.Optimization.sln
+		SccProjectName4 = src/WebForms
+		SccLocalPath4 = src\\WebForms
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = System.Web.Optimization.vsmdi
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1075A673-BA04-452A-98A1-9067C5E7CC3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1075A673-BA04-452A-98A1-9067C5E7CC3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1075A673-BA04-452A-98A1-9067C5E7CC3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1075A673-BA04-452A-98A1-9067C5E7CC3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E19167F0-1579-4931-94F7-21A7128569EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E19167F0-1579-4931-94F7-21A7128569EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E19167F0-1579-4931-94F7-21A7128569EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E19167F0-1579-4931-94F7-21A7128569EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA6E6E43-224E-47D1-9789-D118A3F5DE5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA6E6E43-224E-47D1-9789-D118A3F5DE5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA6E6E43-224E-47D1-9789-D118A3F5DE5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA6E6E43-224E-47D1-9789-D118A3F5DE5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{565DF39B-F6AD-4E9E-B807-F9F0A2E9BD92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{565DF39B-F6AD-4E9E-B807-F9F0A2E9BD92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{565DF39B-F6AD-4E9E-B807-F9F0A2E9BD92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{565DF39B-F6AD-4E9E-B807-F9F0A2E9BD92}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1075A673-BA04-452A-98A1-9067C5E7CC3D} = {1D66C4E5-4C20-4545-A512-D6680BC40080}
+		{565DF39B-F6AD-4E9E-B807-F9F0A2E9BD92} = {1D66C4E5-4C20-4545-A512-D6680BC40080}
+		{E19167F0-1579-4931-94F7-21A7128569EF} = {C2254BBA-9321-4BB0-9985-886941EB7996}
+		{81BB8242-0360-4DE9-A70B-36E375F7A186} = {C2254BBA-9321-4BB0-9985-886941EB7996}
+		{AA6E6E43-224E-47D1-9789-D118A3F5DE5D} = {C2254BBA-9321-4BB0-9985-886941EB7996}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,18 @@
+﻿<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Microsoft.AspNet.Web.Optimization.WebForms</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <description>$description$</description>
+    <copyright>Copyright 2012</copyright>
+    <tags>Optimization WebForms Control</tags>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <licenseUrl>http://www.microsoft.com/web/webpi/eula/web_optimization.htm</licenseUrl>
+    <dependencies>
+      <dependency id="Microsoft.Web.Infrastructure" />
+      <dependency id="Microsoft.AspNet.Web.Optimization" version="[1.0.0, 2.0.0)"></dependency>
+    </dependencies>
+  </metadata>
+</package>

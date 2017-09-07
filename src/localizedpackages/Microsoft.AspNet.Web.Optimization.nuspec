@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package>
+    <metadata>
+        <id>Microsoft.AspNet.Web.Optimization.en-US</id>
+        <title>Microsoft ASP.NET Web Optimization {Language} Resources</title>
+        <version>__OPTIMIZATION_PACKAGE_VERSION__</version>
+        <authors>Microsoft</authors>
+        <summary>{Language} resources for the Microsoft.AspNet.Web.Optimization package</summary>
+        <description>This package contains the {Language} satellite assemblies for ASP.NET Web Optimization.</description>
+        <language>en-US</language>
+        <dependencies>
+            <dependency id="Microsoft.AspNet.Web.Optimization" version="[__OPTIMIZATION_PACKAGE_VERSION__]" />
+        </dependencies>
+        <licenseUrl>http://www.microsoft.com/web/webpi/eula/net_library_eula_lang3.htm</licenseUrl>
+        <requireLicenseAcceptance>true</requireLicenseAcceptance>
+        <tags>Microsoft AspNet optimization bundling minification</tags>
+    </metadata>
+    <files>
+      <file src="System.Web.Optimization.resources.dll" target="lib\net40\en-US" />
+    </files>
+  </package>

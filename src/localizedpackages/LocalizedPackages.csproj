@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory),SystemWebOptimization.msbuild))\tools\Optimization.settings.targets" />
+    <Import Project="$(OptimizationToolsPath)Optimization.tasks.targets" />
+    <!-- Turn off copying of project references by default for this, since we just want them built before us -->
+    <ItemDefinitionGroup>
+        <ProjectReference>
+            <Private>False</Private>
+        </ProjectReference>
+    </ItemDefinitionGroup>
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <SkipCopyBuildProduct>true</SkipCopyBuildProduct>
+        <ProductVersion>8.0.30703</ProductVersion>
+        <SchemaVersion>2.0</SchemaVersion>
+        <ProjectGuid>{657D74C4-10AD-4984-AC4B-C8908554A3CB}</ProjectGuid>
+        <OutputPath>$(PackagesOutputPath)</OutputPath>
+        <SymbolOutputPath>$(OutputPath)Symbols\</SymbolOutputPath>
+        <AssemblyPath>$(LocAssemblyPath)</AssemblyPath>
+        <AssemblySymbolPath>$(OptimizationRootPath)bin\$(Configuration)</AssemblySymbolPath>
+        <SccProjectName>SAK</SccProjectName>
+        <SccLocalPath>SAK</SccLocalPath>
+        <SccAuxPath>SAK</SccAuxPath>
+        <SccProvider>SAK</SccProvider>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' " />
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' " />
+    <ItemDefinitionGroup>
+        <Nuspec>
+            <SourcePath>$(AssemblyPath)</SourcePath>
+            <TargetPath>$(OutputPath)</TargetPath>
+            <!--Allow some package to be skipped from generating symbol packages -->
+            <Symbol>false</Symbol>
+        </Nuspec>
+    </ItemDefinitionGroup>
+    <ItemGroup>
+        <Nuspec Include="Microsoft.AspNet.Web.Optimization.nuspec" />
+        <Intellisense Include="$(OptimizationRootPath)docs\intellisense\$(Lang)\**\*.xml" />
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+    <Target Name="Compile">
+        <!--
+      BuildingProject is set to true normally, but it's false when Visual Studio tries to run
+      background compilation. This happens even if the project is skipped (which it normally
+      will be) so only want to try to build NuGet packages when we've been explicitly asked
+      to do so.
+    -->
+        <CallTarget Targets="NuGet" Condition=" '$(BuildingProject)' == 'true' " />
+    </Target>
+    <Target Name="NuGet">
+        <Copy SourceFiles="@(Nuspec)" DestinationFolder="$(OptimizationIntermediateLocOutputPath)"/>
+        <ItemGroup>
+            <Nuspec Remove="@(Nuspec)" />
+            <Nuspec Include="$(OptimizationIntermediateLocOutputPath)\*.nuspec"/>
+        </ItemGroup>
+
+        <RegexReplace Files="@(Nuspec)" Find="en-US" Replace="$(DstLocale)" />
+        <RegexReplace Files="@(Nuspec)" Find="lang3" Replace="$(Lang)" />
+        <RegexReplace Files="@(Nuspec)" Find="__OPTIMIZATION_PACKAGE_VERSION__" Replace="$(OptimizationPackageBuildVersion)" />
+
+        <MakeDir Directories="$(AssemblyPath)\Intellisense" />
+        <Copy SourceFiles="@(Intellisense)" DestinationFiles="@(Intellisense->'$(AssemblyPath)\Intellisense\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true"/>
+
+        <BuildNuGetPackage NuGetExecutable="$(OptimizationRootPath).nuget\NuGet.exe" NuspecFile="@(Nuspec)" />
+        <MSBuild Projects="$(MSBuildThisFileFullPath)" Targets="NugetSymbolSingle"
+                 Properties="SymbolNuspecId=%(Nuspec.Filename);Sign=$(Sign);Configuration=$(Configuration)" Condition=" '%(Symbol)' == 'true' " />
+    </Target>
+    <Target Name="NugetSymbolSinglePrep">
+        <!-- Retrieve package metadata to determine the final package name -->
+        <XmlPeek XmlInputPath="$(SymbolNuspecId).nuspec" Query="/package/metadata/id/text()">
+            <Output PropertyName="OutputSymbolPackageId" TaskParameter="Result" />
+        </XmlPeek>
+        <XmlPeek XmlInputPath="$(SymbolNuspecId).nuspec" Query="/package/metadata/version/text()">
+            <Output PropertyName="OutputSymbolPackageVersion" TaskParameter="Result" />
+        </XmlPeek>
+        <PropertyGroup>
+            <OutputSymbolPackage>$(SymbolOutputPath)\$(OutputSymbolPackageId).$(OutputSymbolPackageVersion).symbols.nupkg</OutputSymbolPackage>
+        </PropertyGroup>
+        <!-- Retrieve set of binaries and symbol files that make up this package -->
+        <XmlPeek XmlInputPath="$(SymbolNuspecId).nuspec" Query="/package/files/file[contains(@src,'.dll')]/@src">
+            <Output ItemName="PackageBinaries" TaskParameter="Result" />
+        </XmlPeek>
+        <ItemGroup>
+            <PackageSymbols Include="@(PackageBinaries -> '$(AssemblySymbolPath)\%(Filename).pdb')" />
+        </ItemGroup>
+    </Target>
+    <Target Name="NugetSymbolSingle" DependsOnTargets="NugetSymbolSinglePrep" Inputs="@(PackageSymbols)" Outputs="$(OutputSymbolPackage)">
+        <PropertyGroup>
+            <SymbolIntermediateBasePath>$(IntermediateOutputPath)NugetSource\</SymbolIntermediateBasePath>
+            <SymbolIntermediatePath>$(SymbolIntermediateBasePath)$(SymbolNuspecId)\</SymbolIntermediatePath>
+            <SymbolSourceList>$(SymbolIntermediateBasePath)$(SymbolNuspecId).srclist</SymbolSourceList>
+        </PropertyGroup>
+        <!-- Clean up temp items -->
+        <RemoveDir Directories="$(SymbolIntermediatePath)" />
+        <Delete Files="$(SymbolSourceList)" />
+        <Copy SourceFiles ="$(SymbolNuspecId).nuspec" DestinationFolder="$(SymbolIntermediatePath)">
+            <Output ItemName="CopiedNuspec" TaskParameter ="CopiedFiles" />
+        </Copy>
+        <!-- Figure out set of source files that were used to compile these symbols -->
+        <Exec Command="$(OptimizationToolsPath)SrcSrv\x86\srctool -r %(PackageSymbols.Identity) >> $(SymbolSourceList)" />
+        <ReadLinesFromFile File="$(SymbolSourceList)">
+            <Output ItemName="SymbolSourcesRaw" TaskParameter="Lines" />
+        </ReadLinesFromFile>
+        <RemoveDuplicates Inputs="@(SymbolSourcesRaw)">
+            <Output ItemName="SymbolSources" TaskParameter="Filtered" />
+        </RemoveDuplicates>
+        <!-- Find common base path so when we copy the source files they have the right relative locations -->
+        <FindCommonBasePath Files="@(SymbolSources)">
+            <Output PropertyName="SymbolSourceBasePath" TaskParameter="BasePath" />
+        </FindCommonBasePath>
+        <MakePathsRelative Paths="@(SymbolSources)" BasePath="$(SymbolSourceBasePath)">
+            <Output ItemName="RelativeSymbolSources" TaskParameter="RelativePaths" />
+        </MakePathsRelative>
+        <!-- Copy files to temp folder -->
+        <Copy SourceFiles="@(RelativeSymbolSources -> '$(SymbolSourceBasePath)%(Identity)')" DestinationFolder="$(SymbolIntermediatePath)src\%(RelativeDir)" />
+        <Copy SourceFiles="@(PackageBinaries -> '$(AssemblyPath)\%(Identity)')" DestinationFolder="$(SymbolIntermediatePath)lib" />
+        <Copy SourceFiles="@(PackageSymbols)" DestinationFolder="$(SymbolIntermediatePath)lib" />
+        <!-- Clean up <files> and <dependencies> elements -->
+        <RegexReplace Files="@(CopiedNuspec)" Find="&lt;files>(?s:.*)&lt;/files>" Replace=" " />
+        <RegexReplace Files="@(CopiedNuspec)" Find="&lt;dependencies>(?s:.*)&lt;/dependencies>" Replace=" " />
+        <!-- Pack the symbol package -->
+        <Exec Command="$(OptimizationToolsPath)NuGet.exe pack @(CopiedNuspec) -NoPackageAnalysis -OutputDirectory $(SymbolIntermediatePath)" />
+        <ItemGroup>
+            <SymbolPackage Include="$(SymbolIntermediatePath)\*.nupkg" />
+        </ItemGroup>
+        <!-- Copy symbol package to output directory -->
+        <Copy SourceFiles="@(SymbolPackage)" DestinationFiles="$(OutputSymbolPackage)" />
+    </Target>
+    <Target Name="Clean">
+        <RemoveDir Directories="$(OutputPath)\Intellisense" />
+        <RemoveDir Directories="$(OutputPath)\NuGet" />
+        <RemoveDir Directories="$(OutputPath)\Microsoft.AspNet.WebApi.Core" />
+        <RemoveDir Directories="$(OutputPath)\Microsoft.AspNet.Web.Optimization.WebForms" />
+    </Target>
+    <Target Name="BeforeBuild">
+    </Target>
+    <UsingTask TaskName="FindCommonBasePath" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll" >
+        <ParameterGroup>
+            <Files ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+            <BasePath ParameterType="Microsoft.Build.Framework.ITaskItem" Output="true" />
+        </ParameterGroup>
+        <Task>
+            <Using Namespace="System.IO" />
+            <Code Type="Fragment" Language="cs">
+                <![CDATA[
+        string longestBasePath = Path.GetDirectoryName(Files[0].ItemSpec);
+        foreach (var file in Files) {
+            while(!file.ItemSpec.StartsWith(longestBasePath)) {
+                longestBasePath= Path.GetDirectoryName(longestBasePath);
+            }
+        }
+        longestBasePath += Path.DirectorySeparatorChar;
+        BasePath = new TaskItem(longestBasePath);
+        ]]>
+            </Code>
+        </Task>
+    </UsingTask>
+    <UsingTask TaskName="MakePathsRelative" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll" >
+        <ParameterGroup>
+            <Paths ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+            <BasePath Required="true" />
+            <RelativePaths ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true" />
+        </ParameterGroup>
+        <Task>
+            <Using Namespace="System.IO" />
+            <Code Type="Fragment" Language="cs">
+                <![CDATA[
+        List<ITaskItem> result = new List<ITaskItem>(Paths.Length);
+        if(!BasePath.EndsWith(Path.DirectorySeparatorChar.ToString())) {
+            BasePath += Path.DirectorySeparatorChar;
+        }
+        foreach(var path in Paths) {
+            if(!path.ItemSpec.StartsWith(BasePath)) {
+               Log.LogError("The path '{0}' does not begin with the given base path '{1}'.", path.ItemSpec, BasePath);
+               Success = false;
+               break;
+            }
+            result.Add(new TaskItem(path.ItemSpec.Replace(BasePath, "")));
+        }
+        if(Success) {
+            RelativePaths = result.ToArray();
+        }
+        ]]>
+            </Code>
+        </Task>
+    </UsingTask>
+</Project>
