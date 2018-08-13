@@ -23,7 +23,8 @@ namespace System.Web.Optimization {
             // Don't do anything to invalid urls or absolute urls
             if (String.IsNullOrWhiteSpace(url) ||
                 String.IsNullOrWhiteSpace(baseUrl) ||
-                url.StartsWith("/", StringComparison.OrdinalIgnoreCase)) {
+                url.StartsWith("/", StringComparison.OrdinalIgnoreCase) ||
+                url.StartsWith("data:", StringComparison.OrdinalIgnoreCase)) {
                 return url;
             }
 
